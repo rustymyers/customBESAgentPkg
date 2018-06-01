@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ "${3}" == "/" ]; then
+	echo "Target is internal drive, stoping daemon..."
+	launchctl unload /Library/LaunchDaemons/BESAgentDaemon.plist
+fi
+
+exit 0
