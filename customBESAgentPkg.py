@@ -96,16 +96,16 @@ def touch(path):
 parser = argparse.ArgumentParser(description='Build Custom BESAgent Installers.', conflict_handler='resolve')
 
 # Add option for adding band
-parser.add_argument('--brand','-b', dest='custom_brand', action="store_true",
-                    help='add branding text to the BESAgent pacakge -b, --brand')
+parser.add_argument('--brand','-b', dest='custom_brand', action="append", type=str,
+                    help='add branding text to the BESAgent pacakge')
 
 # Add option for adding custom settings
 parser.add_argument('--settings','-s', dest='custom_settings', action="store_true",
-                    help='add custom settings cfg to the BESAgent pacakge -s, --settings')
+                    help='add custom settings cfg to the BESAgent pacakge')
 
 # Add option for specific package
-parser.add_argument('--package','-p', dest='custom_package', action="append", type=str,
-                    help='create a installer for a custom division -c, --custom <URN> <GUID>')
+parser.add_argument('--package','-p', dest='custom_pkg', action="append", type=str,
+                    help='specify the BESAgent pacakge to use')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -116,8 +116,8 @@ if not sys.platform.startswith('darwin'):
      exit(2)
 
 # run function to get packages
-if args.custom_package:
-    default_package = args.custom_package[0]
+if args.custom_pkg:
+    default_package = args.custom_pkg[0]
     print default_package[0:-4]
     default_folder = default_package[0:-4]
 else:
