@@ -66,12 +66,12 @@ def loadPackages():
         p=os.path.join(source, filename)
         # check if it's a file
         if os.path.isfile(p):
-            print("Found: " + str(filename))
             # Check if it matches BESAgent regex
             pattern = re.compile(r'^BESAgent-(\d+.\d+.\d+.\d+)-*.*pkg')
             match = pattern.search(filename)
             # If it matches, add it to the array of all packages
             if match:
+                print("Found: " + str(filename))
                 besPkgs.append(p)
     # If we have more than one package found, notify
     if len(besPkgs) > 1:
@@ -146,6 +146,7 @@ clean_up(modifiedDest)
 # Set path to distribution file
 DistroFile = os.path.join(modifiedDest, "Distribution")
 
+print("Copying ModifiedFiles...")
 # If the default folder is missing
 # Default folder is the BESAgent package expanded, 
 # with the addition of our ModifiedFiles.
@@ -161,7 +162,7 @@ if not os.path.isdir(modifiedDest):
     # Create array of all of the modified files
     src_files = os.listdir(src)
     # For each file in the array of all modified files
-    print "Dest {0}".format(dest)
+    # print "Dest {0}".format(dest)
     for file_name in src_files:
         # create path with source path and file name
         full_file_name = os.path.join(src, file_name)
@@ -169,8 +170,10 @@ if not os.path.isdir(modifiedDest):
         if (os.path.isfile(full_file_name)):
             if "clientsettings.cfg" in full_file_name:
                 if args.custom_settings:
+                    print("    Copying: " + str(file_name))
                     shutil.copy(full_file_name, dest)
             else:
+                print("    Copying: " + str(file_name))
                 shutil.copy(full_file_name, dest)
 
 # Make dir for destination packages
@@ -190,6 +193,7 @@ os.system(sys_cmd)
     
 # Echo Unit Name into Brand file if requested
 if args.custom_brand:
+    print("Adding custom branding.")
     sys_cmd = "echo \"" + name + "\" > " + os.path.join(unit_folder, "besagent.pkg/Scripts" ,"brand.txt")
     os.system(sys_cmd)
 
@@ -198,7 +202,8 @@ sys_cmd = "pkgutil --flatten " + unit_folder + " " + finishedFolder + "/" + unit
 os.system(sys_cmd)
 # Clean out custom folder
 clean_up(unit_folder)
-                
+
 # Clean ourselves up
 clean_up(modifiedDest)
 
+print("Package completed: " + str(unit_package))
