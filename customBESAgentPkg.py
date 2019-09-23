@@ -28,6 +28,9 @@ import xml.etree.ElementTree as ET
 
 # Names of packages to export
 name = "CUSTOM"
+# Set signing cert to name of certificate on system
+# Print certificates in termianl: security find-identity -v -p codesigning
+signing_cert='Developer ID Installer: $ORGNAME ($ORGID)'
 
 # Functions to sort list of packages
 # https://stackoverflow.com/questions/4623446/how-do-you-sort-files-numerically
@@ -47,6 +50,26 @@ def sort_nicely(l):
     """ Sort the given list in the way that humans expect.
     """
     l.sort(key=alphanum_key)
+
+# Function to sign packages
+def signPackage(pkg):
+    # rename unsigned package so that we can slot the signed package into place
+    print "signPackage received: "
+    print pkg
+    pkg_dir = os.path.dirname( pkg )
+    pkg_base_name = os.path.basename( pkg )
+    ( pkg_name_no_extension, pkg_extension ) = os.path.splitext( pkg_base_name )
+    unsigned_pkg_path = os.path.join( pkg_dir, pkg_name_no_extension + "-unsigned" + pkg_extension )
+
+    os.rename( os.path.abspath(pkg), os.path.abspath(unsigned_pkg_path) )
+
+    command_line_list = [ "/usr/bin/productsign", \
+                          "--sign", \
+                          signing_cert, \
+                          unsigned_pkg_path, \
+                          pkg ]
+    subprocess.call( command_line_list )
+    os.remove(unsigned_pkg_path)
 
 # Function to remove 'relocate' tags
 # This forces installer to place files in correct location on disk
@@ -224,5 +247,8 @@ clean_up(unit_folder)
 
 # Clean ourselves up
 clean_up(modifiedDest)
+
+# Uncomment to sign pacakage before finishing
+# signPackage(finishedFolder + "/" + unit_package)
 
 print("Package completed: " + str(unit_package))
