@@ -29,6 +29,24 @@ import xml.etree.ElementTree as ET
 # Names of packages to export
 name = "CUSTOM"
 
+# Functions to sort list of packages
+# https://stackoverflow.com/questions/4623446/how-do-you-sort-files-numerically
+def tryint(s):
+    try:
+        return int(s)
+    except:
+        return s
+
+def alphanum_key(s):
+    """ Turn a string into a list of string and number chunks.
+        "z23a" -> ["z", 23, "a"]
+    """
+    return [ tryint(c) for c in re.split('([0-9]+)', s) ]
+
+def sort_nicely(l):
+    """ Sort the given list in the way that humans expect.
+    """
+    l.sort(key=alphanum_key)
 
 # Function to remove 'relocate' tags
 # This forces installer to place files in correct location on disk
@@ -76,6 +94,7 @@ def loadPackages():
     # If we have more than one package found, notify
     if len(besPkgs) > 1:
         print "Found more than one package, choosing latest version."
+        sort_nicely(besPkgs)
     # Return the last package found, which should be latest verison
     return besPkgs[-1]
 
