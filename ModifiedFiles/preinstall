@@ -5,4 +5,16 @@ if [ "${3}" == "/" ]; then
 	launchctl unload /Library/LaunchDaemons/BESAgentDaemon.plist
 fi
 
+# if ARM64, test for Rosetta. Install if necessary.
+
+$theArch = $( /usr/bin/arch )
+$theDir = "/Library/Apple/usr/libexec/oah"
+
+if [[ $theArch = "arm64"]]; then
+	if ! [[ -e $theDir && -d $theDir ]]; then
+		usr/sbin/softwareupdate --install-rosetta --agree-to-license
+	fi
+fi
+
+
 exit 0
