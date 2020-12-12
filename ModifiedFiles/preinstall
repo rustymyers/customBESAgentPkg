@@ -7,8 +7,8 @@ fi
 
 # if ARM64, test for Rosetta. Install if necessary.
 
-$theArch = $( /usr/bin/arch )
-$theDir = "/Library/Apple/usr/libexec/oah"
+$theArch=$( /usr/bin/arch )
+$theDir="/Library/Apple/usr/libexec/oah"
 
 if [[ $theArch = "arm64"]]; then
 	if ! [[ -e $theDir && -d $theDir ]]; then
