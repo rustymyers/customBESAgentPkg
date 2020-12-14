@@ -12,7 +12,7 @@ $theDir="/Library/Apple/usr/libexec/oah"
 
 if [[ $theArch = "arm64"]]; then
 	if ! [[ -e $theDir && -d $theDir ]]; then
-		usr/sbin/softwareupdate --install-rosetta --agree-to-license
+		/usr/sbin/softwareupdate --install-rosetta --agree-to-license
 	fi
 fi
 
