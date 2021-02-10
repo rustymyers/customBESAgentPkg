@@ -1,4 +1,6 @@
-# customBESAgentPkg
+# Deprecating this project in favor of almost exact same code in [BESAgentCustomInstaller](https://github.com/rustymyers/BESAgentCustomInstaller) repo!
+
+customBESAgentPkg
 
 Add actionsite.afxm to ModifiedFiles folder
 
