@@ -3,6 +3,8 @@
 # Matt Hansen (mah60@psu.edu) - 3/3/2014
 # modified for DEP by rzm102 - 01/25/2016
 # Added code for automatic group - 01/29/2018
+# Added code for json by atlauren - 06/01/2022
+#    https://bigfix.slack.com/archives/CA4N683J6/p1652397740502799
 
 /usr/sbin/chown root:wheel "${3}/Library/LaunchDaemons/BESAgentDaemon.plist"
 
@@ -19,9 +21,15 @@ fi
 if [[ ! -f "${3}/Library/Preferences/com.bigfix.BESAgent.plist" ]]; then
 	if [[ -f "clientsettings.cfg" ]]; then
 		echo "No com.bigfix.BESAgent.plist on the host, found clientsettings.cfg"
-		"${3}/Library/BESAgent/BESAgent.app/Contents/MacOS/CfgToPList.pl" "clientsettings.cfg" "${3}/Library/Preferences/com.bigfix.BESAgent.plist"
+		"${3}/Library/BESAgent/BESAgent.app/Contents/MacOS/CfgToPList.pl" "clientsettings.cfg" "$INSTALLER_TEMP/clientsettings.json"
 	fi
 fi
+
+if [[ -f "$INSTALLER_TEMP/clientsettings.json" ]]; then
+	echo "Applying custom settings"
+		/Library/BESAgent/BESAgent.app/Contents/MacOS/BESAgent -setSettings "$INSTALLER_TEMP/clientsettings.json"
+fi
+
 
 if [[ -f "brand.txt" ]]; then
 	echo "Found brand.txt, checking for com.bigfix.BESAgent.plist"
