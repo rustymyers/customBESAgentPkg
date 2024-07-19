@@ -21,7 +21,7 @@ fi
 if [[ ! -f "${3}/Library/Preferences/com.bigfix.BESAgent.plist" ]]; then
 	if [[ -f "clientsettings.cfg" ]]; then
 		echo "No com.bigfix.BESAgent.plist on the host, found clientsettings.cfg"
-		"${3}/Library/BESAgent/BESAgent.app/Contents/MacOS/CfgToPList.pl" "clientsettings.cfg" "$INSTALLER_TEMP/clientsettings.json"
+		"${3}/Library/BESAgent/BESAgent.app/Contents/MacOS/CfgToJSON.pl" "clientsettings.cfg" "$INSTALLER_TEMP/clientsettings.json"
 	fi
 	if [[ -f "$INSTALLER_TEMP/clientsettings.json" ]]; then
 		echo "Applying custom settings"
