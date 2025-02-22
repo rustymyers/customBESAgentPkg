@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #--------------------------------------------------------------------------------------------------
 #-- systemDivisions
 #--------------------------------------------------------------------------------------------------
@@ -17,13 +17,14 @@
 #
 # Revisions  : 
 #           2016-01-25 <rzm102>   Initial Version
+#			2025-02-21 <atlauren@uci.edu> python3
 #
-# Version    : 1.0
+# Version    : 1.1
 #--------------------------------------------------------------------------------------------------
 
 
 import sys, glob, os, re, shutil, argparse, subprocess
-import urllib2 as url
+# import urllib2 as url
 import xml.etree.ElementTree as ET
 
 # Names of packages to export
@@ -54,8 +55,8 @@ def sort_nicely(l):
 # Function to sign packages
 def signPackage(pkg):
     # rename unsigned package so that we can slot the signed package into place
-    print "signPackage received: "
-    print pkg
+    print( "signPackage received: ")
+    print( pkg)
     pkg_dir = os.path.dirname( pkg )
     pkg_base_name = os.path.basename( pkg )
     ( pkg_name_no_extension, pkg_extension ) = os.path.splitext( pkg_base_name )
@@ -116,7 +117,7 @@ def loadPackages():
                 besPkgs.append(p)
     # If we have more than one package found, notify
     if len(besPkgs) > 1:
-        print "Found more than one package, choosing latest version."
+        print( "Found more than one package, choosing latest version.")
         sort_nicely(besPkgs)
     # Return the last package found, which should be latest verison
     return besPkgs[-1]
@@ -154,13 +155,13 @@ args = parser.parse_args()
 
 # Check that we're on OS X
 if not sys.platform.startswith('darwin'):
-     print "This script currently requires it be run on macOS"
+     print( "This script currently requires it be run on macOS")
      exit(2)
 
 # run function to get packages
 if args.custom_pkg:
     default_package = args.custom_pkg[0]
-    print default_package[0:-4]
+    print( default_package[0:-4])
     default_folder = default_package[0:-4]
 else:
     default_package = loadPackages()
@@ -174,7 +175,7 @@ if not os.path.isdir(modifiedFolder):
     os.mkdir(modifiedFolder)
 
 # Notify user of default package being used
-print "Using Package: " + default_package
+print( "Using Package: " + default_package)
 
 
 # Make the path for the modified package destination
@@ -249,6 +250,6 @@ clean_up(unit_folder)
 clean_up(modifiedDest)
 
 # Uncomment to sign pacakage before finishing
-# signPackage(finishedFolder + "/" + unit_package)
+signPackage(finishedFolder + "/" + unit_package)
 
 print("Package completed: " + str(unit_package))
