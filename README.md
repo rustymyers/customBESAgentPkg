@@ -10,7 +10,7 @@ If you want to include clientsettings.cfg in the custom pacakge, use the -s flag
 
 Adding a brand can be done by editing the "name" variable in the customBESAgentPkg.py script and using the -b flag.
 
-```
+```bash
 usage: customBESAgentPkg.py [-h] [--brand CUSTOM_BRAND] [--settings]
                             [--package CUSTOM_PKG]
 

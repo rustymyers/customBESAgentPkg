@@ -30,7 +30,7 @@ import xml.etree.ElementTree as ET
 name = "CUSTOM"
 # Set signing cert to name of certificate on system
 # Print certificates in termianl: security find-identity -v -p codesigning
-signing_cert = "Developer ID Installer: $ORGNAME ($ORGID)"
+signing_cert = "Developer ID Installer: The Pennsylvania State University (VQ32N9FEBR)"
 
 
 # Functions to sort list of packages
@@ -68,10 +68,8 @@ def signPackage(pkg):
     os.rename(os.path.abspath(pkg), os.path.abspath(unsigned_pkg_path))
 
     try:
-        exit_code = subprocess.run(
+        subprocess.run(
             ["/usr/bin/productsign", "--sign", signing_cert, unsigned_pkg_path, pkg],
-            shell=False,
-            check=True,
         )
     except:
 
@@ -79,6 +77,7 @@ def signPackage(pkg):
         print(
             """\tsecurity find-identity | grep Installer: | tail -1 | awk -F\\" '{ print $2 }'"""
         )
+        exit(1)
     os.remove(unsigned_pkg_path)
     # if exit_code == 1:
 
