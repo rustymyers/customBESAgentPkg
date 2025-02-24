@@ -1,11 +1,11 @@
-#!/usr/bin/env python
-#--------------------------------------------------------------------------------------------------
-#-- systemDivisions
-#--------------------------------------------------------------------------------------------------
+#!/usr/bin/env python3
+# --------------------------------------------------------------------------------------------------
+# -- systemDivisions
+# --------------------------------------------------------------------------------------------------
 # Program    : systemDivisions
 # To Complie : n/a
 #
-# Purpose    : 
+# Purpose    :
 #
 # Called By  :
 # Calls      :
@@ -13,17 +13,18 @@
 # Author     : Rusty Myers <rzm102@psu.edu>
 # Based Upon :
 #
-# Note       : 
+# Note       :
 #
-# Revisions  : 
+# Revisions  :
 #           2016-01-25 <rzm102>   Initial Version
-#			2025-02-21 <atlauren@uci.edu> python3
+# 			2025-02-21 <atlauren@uci.edu> python3
 #
 # Version    : 1.1
-#--------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 
 
 import sys, glob, os, re, shutil, argparse, subprocess
+
 # import urllib2 as url
 import xml.etree.ElementTree as ET
 
@@ -31,7 +32,8 @@ import xml.etree.ElementTree as ET
 name = "CUSTOM"
 # Set signing cert to name of certificate on system
 # Print certificates in termianl: security find-identity -v -p codesigning
-signing_cert='Developer ID Installer: $ORGNAME ($ORGID)'
+signing_cert = "Developer ID Installer: $ORGNAME ($ORGID)"
+
 
 # Functions to sort list of packages
 # https://stackoverflow.com/questions/4623446/how-do-you-sort-files-numerically
@@ -41,36 +43,43 @@ def tryint(s):
     except:
         return s
 
+
 def alphanum_key(s):
-    """ Turn a string into a list of string and number chunks.
-        "z23a" -> ["z", 23, "a"]
+    """Turn a string into a list of string and number chunks.
+    "z23a" -> ["z", 23, "a"]
     """
-    return [ tryint(c) for c in re.split('([0-9]+)', s) ]
+    return [tryint(c) for c in re.split("([0-9]+)", s)]
+
 
 def sort_nicely(l):
-    """ Sort the given list in the way that humans expect.
-    """
+    """Sort the given list in the way that humans expect."""
     l.sort(key=alphanum_key)
+
 
 # Function to sign packages
 def signPackage(pkg):
     # rename unsigned package so that we can slot the signed package into place
-    print( "signPackage received: ")
-    print( pkg)
-    pkg_dir = os.path.dirname( pkg )
-    pkg_base_name = os.path.basename( pkg )
-    ( pkg_name_no_extension, pkg_extension ) = os.path.splitext( pkg_base_name )
-    unsigned_pkg_path = os.path.join( pkg_dir, pkg_name_no_extension + "-unsigned" + pkg_extension )
+    print("signPackage received: ")
+    print(pkg)
+    pkg_dir = os.path.dirname(pkg)
+    pkg_base_name = os.path.basename(pkg)
+    (pkg_name_no_extension, pkg_extension) = os.path.splitext(pkg_base_name)
+    unsigned_pkg_path = os.path.join(
+        pkg_dir, pkg_name_no_extension + "-unsigned" + pkg_extension
+    )
 
-    os.rename( os.path.abspath(pkg), os.path.abspath(unsigned_pkg_path) )
+    os.rename(os.path.abspath(pkg), os.path.abspath(unsigned_pkg_path))
 
-    command_line_list = [ "/usr/bin/productsign", \
-                          "--sign", \
-                          signing_cert, \
-                          unsigned_pkg_path, \
-                          pkg ]
-    subprocess.call( command_line_list )
+    command_line_list = [
+        "/usr/bin/productsign",
+        "--sign",
+        signing_cert,
+        unsigned_pkg_path,
+        pkg,
+    ]
+    subprocess.call(command_line_list)
     os.remove(unsigned_pkg_path)
+
 
 # Function to remove 'relocate' tags
 # This forces installer to place files in correct location on disk
@@ -94,9 +103,10 @@ def derelocatePacakge(distroPath):
     # Write new Distribution file
     tree.write(distroPath)
 
+
 # Function to load the latest BESAgent Installer
 def loadPackages():
-    # searches for BESAgent installer packages, returns latest version if 
+    # searches for BESAgent installer packages, returns latest version if
     # multiple are found
     # Store packages in local folder
     besPkgs = []
@@ -105,11 +115,11 @@ def loadPackages():
     # check each file
     for filename in sorted(os.listdir(source)):
         # join path and filename
-        p=os.path.join(source, filename)
+        p = os.path.join(source, filename)
         # check if it's a file
         if os.path.isfile(p):
             # Check if it matches BESAgent regex
-            pattern = re.compile(r'^BESAgent-(\d+.\d+.\d+.\d+)-*.*pkg')
+            pattern = re.compile(r"^BESAgent-(\d+.\d+.\d+.\d+)-*.*pkg")
             match = pattern.search(filename)
             # If it matches, add it to the array of all packages
             if match:
@@ -117,10 +127,11 @@ def loadPackages():
                 besPkgs.append(p)
     # If we have more than one package found, notify
     if len(besPkgs) > 1:
-        print( "Found more than one package, choosing latest version.")
+        print("Found more than one package, choosing latest version.")
         sort_nicely(besPkgs)
     # Return the last package found, which should be latest verison
     return besPkgs[-1]
+
 
 # Clean out the modified files
 def clean_up(oldfilepath):
@@ -128,40 +139,61 @@ def clean_up(oldfilepath):
     if os.path.isdir(oldfilepath):
         shutil.rmtree(oldfilepath)
 
+
 # Touch a file - written by mah60
 def touch(path):
     basedir = os.path.dirname(path)
     if not os.path.exists(basedir):
         os.makedirs(basedir)
-    open(path, 'a').close()
+    open(path, "a").close()
+
 
 # Add command line arguments
-parser = argparse.ArgumentParser(description='Build Custom BESAgent Installers.', conflict_handler='resolve')
+parser = argparse.ArgumentParser(
+    description="Build Custom BESAgent Installers.", conflict_handler="resolve"
+)
 
 # Add option for adding band
-parser.add_argument('--brand','-b', dest='custom_brand', action="append", type=str,
-                    help='add branding text to the BESAgent pacakge')
+parser.add_argument(
+    "--brand",
+    "-b",
+    dest="custom_brand",
+    action="append",
+    type=str,
+    help="add branding text to the BESAgent pacakge",
+)
 
 # Add option for adding custom settings
-parser.add_argument('--settings','-s', dest='custom_settings', action="store_true",
-                    help='add custom settings cfg to the BESAgent pacakge')
+parser.add_argument(
+    "--settings",
+    "-s",
+    dest="custom_settings",
+    action="store_true",
+    help="add custom settings cfg to the BESAgent pacakge",
+)
 
 # Add option for specific package
-parser.add_argument('--package','-p', dest='custom_pkg', action="append", type=str,
-                    help='specify the BESAgent pacakge to use')
+parser.add_argument(
+    "--package",
+    "-p",
+    dest="custom_pkg",
+    action="append",
+    type=str,
+    help="specify the BESAgent pacakge to use",
+)
 
 # Parse the arguments
 args = parser.parse_args()
 
 # Check that we're on OS X
-if not sys.platform.startswith('darwin'):
-     print( "This script currently requires it be run on macOS")
-     exit(2)
+if not sys.platform.startswith("darwin"):
+    print("This script currently requires it be run on macOS")
+    exit(2)
 
 # run function to get packages
 if args.custom_pkg:
     default_package = args.custom_pkg[0]
-    print( default_package[0:-4])
+    print(default_package[0:-4])
     default_folder = default_package[0:-4]
 else:
     default_package = loadPackages()
@@ -175,7 +207,7 @@ if not os.path.isdir(modifiedFolder):
     os.mkdir(modifiedFolder)
 
 # Notify user of default package being used
-print( "Using Package: " + default_package)
+print("Using Package: " + default_package)
 
 
 # Make the path for the modified package destination
@@ -191,7 +223,7 @@ DistroFile = os.path.join(modifiedDest, "Distribution")
 
 print("Copying ModifiedFiles...")
 # If the default folder is missing
-# Default folder is the BESAgent package expanded, 
+# Default folder is the BESAgent package expanded,
 # with the addition of our ModifiedFiles.
 if not os.path.isdir(modifiedDest):
     # Expand default pacakge to create the default folder
@@ -210,7 +242,7 @@ if not os.path.isdir(modifiedDest):
         # create path with source path and file name
         full_file_name = os.path.join(src, file_name)
         # if it's a file, copy it to the default folder
-        if (os.path.isfile(full_file_name)):
+        if os.path.isfile(full_file_name):
             if "clientsettings.cfg" in full_file_name:
                 if args.custom_settings:
                     print("    Copying: " + str(file_name))
@@ -225,7 +257,7 @@ if not os.path.isdir(finishedFolder):
     os.mkdir(finishedFolder)
 
 # Print out the one we're doing
-#print "{0:<40}".format(name)
+# print "{0:<40}".format(name)
 # Name of temp unit folder
 unit_folder = default_folder + "-" + name
 # Name of unit package
@@ -233,11 +265,16 @@ unit_package = unit_folder + ".pkg"
 # Copy modified package folder to temp unit folder
 sys_cmd = "cp -R " + modifiedDest + " " + unit_folder
 os.system(sys_cmd)
-    
+
 # Echo Unit Name into Brand file if requested
 if args.custom_brand:
     print("Adding custom branding.")
-    sys_cmd = "echo \"" + name + "\" > " + os.path.join(unit_folder, "besagent.pkg/Scripts" ,"brand.txt")
+    sys_cmd = (
+        'echo "'
+        + name
+        + '" > '
+        + os.path.join(unit_folder, "besagent.pkg/Scripts", "brand.txt")
+    )
     os.system(sys_cmd)
 
 # Flatten customized unit folder into final package
