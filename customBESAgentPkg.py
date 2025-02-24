@@ -69,21 +69,20 @@ def signPackage(pkg):
 
     os.rename(os.path.abspath(pkg), os.path.abspath(unsigned_pkg_path))
 
-    exit_code = subprocess.call(
-        [
-            "/usr/bin/productsign",
-            "--sign",
-            signing_cert,
-            unsigned_pkg_path,
-            pkg,
-        ]
-    )
-    if exit_code == 1:
+    try:
+        exit_code = subprocess.run(
+            ["/usr/bin/productsign", "--sign", signing_cert, unsigned_pkg_path, pkg],
+            shell=False,
+            check=True,
+        )
+    except:
+
         print("Can't find Cert? Try: ")
         print(
             """\tsecurity find-identity | grep Installer: | tail -1 | awk -F\\" '{ print $2 }'"""
         )
     os.remove(unsigned_pkg_path)
+    # if exit_code == 1:
 
 
 # Function to remove 'relocate' tags
