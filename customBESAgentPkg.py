@@ -59,8 +59,7 @@ def sort_nicely(l):
 # Function to sign packages
 def signPackage(pkg):
     # rename unsigned package so that we can slot the signed package into place
-    print("signPackage received: ")
-    print(pkg)
+    print("signPackage received: {0}".format(pkg))
     pkg_dir = os.path.dirname(pkg)
     pkg_base_name = os.path.basename(pkg)
     (pkg_name_no_extension, pkg_extension) = os.path.splitext(pkg_base_name)
@@ -77,7 +76,12 @@ def signPackage(pkg):
         unsigned_pkg_path,
         pkg,
     ]
-    subprocess.call(command_line_list)
+    exit_code = subprocess.call(command_line_list)
+    if exit_code == 1:
+        print("Can't find Cert? Try: ")
+        print(
+            """\tsecurity find-identity | grep Installer: | tail -1 | awk -F\\" '{ print $2 }'"""
+        )
     os.remove(unsigned_pkg_path)
 
 
@@ -130,7 +134,14 @@ def loadPackages():
         print("Found more than one package, choosing latest version.")
         sort_nicely(besPkgs)
     # Return the last package found, which should be latest verison
-    return besPkgs[-1]
+    try:
+        latest_pkg = besPkgs[-1]
+    except:
+        print(
+            "Can't find any pacakges! Download BESAgent package from https://support.bigfix.com/bes/release/ and place next to this script."
+        )
+        exit(1)
+    return latest_pkg
 
 
 # Clean out the modified files
