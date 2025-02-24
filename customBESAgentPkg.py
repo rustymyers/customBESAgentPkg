@@ -69,14 +69,15 @@ def signPackage(pkg):
 
     os.rename(os.path.abspath(pkg), os.path.abspath(unsigned_pkg_path))
 
-    command_line_list = [
-        "/usr/bin/productsign",
-        "--sign",
-        signing_cert,
-        unsigned_pkg_path,
-        pkg,
-    ]
-    exit_code = subprocess.call(command_line_list)
+    exit_code = subprocess.call(
+        [
+            "/usr/bin/productsign",
+            "--sign",
+            signing_cert,
+            unsigned_pkg_path,
+            pkg,
+        ]
+    )
     if exit_code == 1:
         print("Can't find Cert? Try: ")
         print(
