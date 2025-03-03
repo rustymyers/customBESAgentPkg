@@ -30,7 +30,7 @@ import xml.etree.ElementTree as ET
 name = "CUSTOM"
 # Set signing cert to name of certificate on system
 # Print certificates in termianl: security find-identity -v -p codesigning
-signing_cert = "Developer ID Installer: The Pennsylvania State University (VQ32N9FEBR)"
+signing_cert = "Developer ID Installer: Company (CODE)"
 
 
 # Functions to sort list of packages
