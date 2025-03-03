@@ -1,6 +1,4 @@
-# Deprecating this project in favor of almost exact same code in [BESAgentCustomInstaller](https://github.com/rustymyers/BESAgentCustomInstaller) repo!
-
-customBESAgentPkg
+# customBESAgentPkg
 
 Add actionsite.afxm to ModifiedFiles folder
 
@@ -8,11 +6,11 @@ Add stock BESAgent installer to root folder
 
 Run ./customBESAgentPkg.py
 
-If you want to include clientsettings.cfg in the custom pacakge, use the -s flag. 
+If you want to include clientsettings.cfg in the custom pacakge, use the -s flag.
 
 Adding a brand can be done by editing the "name" variable in the customBESAgentPkg.py script and using the -b flag.
 
-~~~~
+```bash
 usage: customBESAgentPkg.py [-h] [--brand CUSTOM_BRAND] [--settings]
                             [--package CUSTOM_PKG]
 
@@ -25,4 +23,4 @@ optional arguments:
   --settings, -s        add custom settings cfg to the BESAgent pacakge
   --package CUSTOM_PKG, -p CUSTOM_PKG
                         specify the BESAgent pacakge to use
-~~~~ 
+```
